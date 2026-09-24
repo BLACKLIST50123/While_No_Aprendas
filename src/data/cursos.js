@@ -1,6 +1,11 @@
 // Posiciones (%) de los nodos sobre public/mapa1.jpg
 export const NODOS = [[18,86],[25,71],[33.5,61],[42,53.5],[52,49],[64,48.4],[74.4,48.4]];
-export const BOTS = [{ n: 'Pixel_X', x: 240 }, { n: 'CodeNinja', x: 190 }, { n: 'LoopHero', x: 150 }, { n: 'BitQueen', x: 110 }];
+export const BOTS = [
+  { n: 'Ana', x: 950, avatar: 'ana' },
+  { n: 'Leo', x: 760, avatar: 'leo' },
+  { n: 'Mia', x: 680, avatar: 'mia' },
+  { n: 'Alex', x: 640, avatar: 'alex' },
+];
 export const PERSONAJES = { girl: '👩‍💻', boy: '🧑‍💻', dog: '🐶' };
 export const estrellas = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 
@@ -8,6 +13,7 @@ export const estrellas = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 export const CURSOS = [
   { id: 'basica', nombre: 'Programación básica', niveles: [
     { t: 'Variables', ej: [
+      { tipo: 'alt', p: '¿Qué es una variable?', o: ['Un espacio para guardar un dato', 'Un tipo de bucle', 'Una función matemática', 'Un archivo del programa'], a: 0 },
       { tipo: 'alt', p: 'Si escribes edad = 15, ¿qué es "edad"?', o: ['Una variable que guarda un valor', 'Un bucle', 'Un error'], a: 0 },
       { tipo: 'orden', p: 'Ordena los pasos para sumar dos números.', l: ['Leer a', 'Leer b', 'suma = a + b', 'Mostrar suma'] }] },
     { t: 'Operadores', ej: [

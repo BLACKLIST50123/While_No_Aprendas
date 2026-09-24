@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BOTS, CURSOS } from '../data/cursos';
+import { AvatarPixel, StarGold } from './PixelIcons';
 
 export function Ventana({ titulo, onCerrar, children }) {
   useEffect(() => {
@@ -18,30 +19,50 @@ export function Ventana({ titulo, onCerrar, children }) {
 }
 
 export function Ranking({ xp, nombre = 'Tú' }) {
-  const filas = [...BOTS, { n: nombre.slice(0, 9), x: xp, yo: true }].sort((a, b) => b.x - a.x);
+  const filas = [...BOTS, { n: nombre.slice(0, 9), x: xp, yo: true, avatar: 'tu' }].sort((a, b) => b.x - a.x);
   return (
-    <div className="box">
-      <h3>Ranking de sección</h3>
-      {filas.map((r, i) => (
-        <div key={r.n} className={`rk ${r.yo ? 'me' : ''}`}><span>{i + 1} {r.n}</span><span>{r.x}</span></div>
-      ))}
+    <div className="rk-card">
+      <div className="rk-header-ribbon">
+        <span>Ranking de Sección</span>
+      </div>
+      <div className="rk-list">
+        {filas.slice(0, 5).map((r, i) => (
+          <div key={r.n + i} className={`rk-row ${r.yo ? 'me' : ''}`}>
+            <span className="rk-pos">{i + 1}</span>
+            <div className="rk-avatar-box">
+              <AvatarPixel tipo={r.avatar || (r.yo ? 'tu' : 'leo')} size={18} />
+            </div>
+            <span className="rk-name">{r.yo ? 'Tú' : r.n}</span>
+            <span className="rk-score">{r.x}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export function Objetivo({ hechos, total }) {
+  const pct = Math.min(100, Math.round((hechos / (total || 1)) * 100));
   return (
-    <div className="box">
-      <h3>Objetivo de sección</h3>
-      <div className="centro">Completa {total} niveles</div>
-      <div className="bar"><i style={{ width: (hechos / total) * 100 + '%' }} /></div>
-      <div className="centro">{hechos} / {total}</div>
+    <div className="obj-card">
+      <div className="side-divider" />
+      <div className="obj-header">Objetivo de Sección</div>
+      <div className="obj-star-icon">
+        <StarGold size={26} />
+      </div>
+      <div className="obj-subtitle">Completa {total} niveles</div>
+      <div className="obj-bar-wrapper">
+        <div className="obj-bar-track">
+          <div className="obj-bar-fill" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+      <div className="obj-counter">{hechos} / {total}</div>
     </div>
   );
 }
 
 const vals = (s) => Object.values(s.hechos).flatMap((h) => Object.values(h));
-export const LOGROS = [
+const LOGROS = [
   { id: 'primero', t: 'Primer paso', d: 'Completa tu primer nivel', ok: (s) => vals(s).length >= 1 },
   { id: 'perfecto', t: 'Perfeccionista', d: 'Saca 3 estrellas en un nivel', ok: (s) => vals(s).includes(3) },
   { id: 'racha3', t: 'Constancia', d: 'Llega a 3 días de racha', ok: (s) => s.racha >= 3 },

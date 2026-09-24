@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 const dia = (t) => new Date(t).toISOString().slice(0, 10);
-const inicial = { hechos: {}, xp: 0, com: 3, racha: 1, ultimo: '' };
+const inicial = { hechos: { basica: { 0: 3, 1: 3 } }, xp: 820, com: 3, racha: 12, ultimo: '' };
 
 function cargar(KEY) {
   let s = {};

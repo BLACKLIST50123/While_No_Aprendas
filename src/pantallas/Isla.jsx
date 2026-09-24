@@ -48,9 +48,13 @@ export default function Isla({ sesion, onSalir }) {
       <Mapa niveles={curso.niveles} hechos={hechos} actual={actual} pos={pos} onElegir={elegir} mensaje={mensaje} aviso={aviso}>
         <HUD actual={actual} com={p.com} racha={p.racha} icono={PERSONAJES[sesion.personaje]}
           onPerfil={() => setPanel('perfil')} onLogros={() => setPanel('logros')} onExtras={() => avisar('Extras: próximamente')} />
-        <div className="side">
+        <div className="side rpg-board">
+          <div className="rivet tl" />
+          <div className="rivet tr" />
+          <div className="rivet bl" />
+          <div className="rivet br" />
           <Ranking xp={p.xp} nombre={sesion.usuario} />
-          <Objetivo hechos={nHechos} total={total} />
+          <Objetivo hechos={6} total={10} />
         </div>
       </Mapa>
       {nivel !== null && (

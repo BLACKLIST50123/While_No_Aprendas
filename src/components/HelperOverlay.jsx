@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import helperSearch from '../assets/helper-search.png';
 import helperTablet from '../assets/helper-tablet.png';
 import { PixelButton } from './UI.jsx';
+import messiahImg from '../assets/helper-search.png';
 
 export default function HelperOverlay({ close, pista }) {
   const [phase, setPhase] = useState(1);

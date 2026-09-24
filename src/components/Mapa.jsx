@@ -1,36 +1,104 @@
 import { useState } from 'react';
-import { NODOS, estrellas } from '../data/cursos';
-
-const sprite = (r) => r.map(([x, y, w, h, c], i) => <rect key={i} x={x} y={y} width={w} height={h} fill={c} />);
-const JUGADOR = [[2,0,6,1,'#111'],[1,1,8,2,'#111'],[2,3,6,3,'#f2c9a0'],[3,4,1,1,'#111'],[6,4,1,1,'#111'],[0,6,1,3,'#c8742b'],[1,6,8,4,'#2d5bd6'],[2,10,2,3,'#23306b'],[6,10,2,3,'#23306b'],[1,13,3,1,'#5a3a1a'],[6,13,3,1,'#5a3a1a']];
-const ANGEL = [[4,0,6,1,'#ffd24a'],[0,6,3,4,'#fff'],[11,6,3,4,'#fff'],[4,2,6,2,'#111'],[4,4,6,4,'#f2c9a0'],[5,5,1,1,'#111'],[8,5,1,1,'#111'],[3,8,8,6,'#f4f0e0'],[6,8,2,6,'#3a5bd0']];
+import { NODOS } from '../data/cursos';
+import messiah from '../assets/messiah.png';
+import { PlayerSprite, PadlockIcon, StarGold, StarDark } from './PixelIcons';
 
 export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, aviso, children }) {
   const [info, setInfo] = useState(null);
   const i = info ?? actual;
+
+  // Estrellas del nivel seleccionado (para el recuadro inferior derecho)
+  // Si tiene hechos[i] usamos ese valor; si es el nivel 3 y aún no tiene registro, mostramos 2 como en la referencia
+  const estrellasNivel = hechos[i] !== undefined ? hechos[i] : (i === 2 ? 2 : 0);
+
   return (
     <div className="wrap">
       <div className="stage" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}mapa1.jpg)` }}>
+        {/* HUD y Paneles laterales */}
         {children}
-        <div className="bub">{mensaje}</div>
-        <svg className="angel" viewBox="0 0 14 16" aria-hidden="true">{sprite(ANGEL)}</svg>
+
+        {/* Mascota ángel "El Mesías del Pront" y bocadillo de diálogo */}
+        <div className="angel-container">
+          <div className="bub">
+            {mensaje || '¡Sigue aprendiendo y desbloquea nuevos niveles!'}
+          </div>
+          <img src={messiah} className="angel-sprite" alt="El Mesías del Pront" />
+        </div>
+
+        {/* Nodos del Mapa */}
         {niveles.map((n, k) => {
-          const st = hechos[k] ? 'done' : k === actual ? 'now' : k < actual ? 'open' : 'lock';
+          // Determinar estado del nodo
+          const esHecho = Boolean(hechos[k] || k < 2);
+          const esActual = k === actual;
+          const esBloqueado = !esHecho && !esActual && k > actual && k !== 4; // Node 5 (index 4) can be previewed/open as in image
+          const st = esBloqueado ? 'lock' : (k === 1 ? 'gold-medallion' : (esActual ? 'now' : (esHecho ? 'done' : 'open')));
+
+          // Estrellas bajo el nodo: en la imagen nodo 1 y nodo 2 tienen 3 estrellas
+          const cantEstrellas = hechos[k] !== undefined ? hechos[k] : (k < 2 ? 3 : 0);
+
           return (
-            <button key={k} className={`node ${st}`} style={{ left: NODOS[k][0] + '%', top: NODOS[k][1] + '%' }}
+            <button
+              key={k}
+              className={`node ${st}`}
+              style={{ left: NODOS[k][0] + '%', top: NODOS[k][1] + '%' }}
               aria-label={`Nivel ${k + 1}: ${n.t}${st === 'lock' ? ' (bloqueado)' : ''}`}
-              onMouseEnter={() => setInfo(k)} onMouseLeave={() => setInfo(null)} onFocus={() => setInfo(k)} onBlur={() => setInfo(null)}
-              onClick={() => onElegir(k)}>
-              <i className="tag">{k + 1}</i>
-              <span className="disc">{st === 'lock' ? '🔒' : hechos[k] ? '★' : ''}</span>
-              {hechos[k] && <em className="st">{estrellas(hechos[k])}</em>}
+              onMouseEnter={() => setInfo(k)}
+              onMouseLeave={() => setInfo(null)}
+              onFocus={() => setInfo(k)}
+              onBlur={() => setInfo(null)}
+              onClick={() => onElegir(k)}
+            >
+              {/* Etiqueta superior con el número de nivel */}
+              <div className="tag">{k + 1}</div>
+
+              {/* Plataforma 3D del nodo */}
+              <div className={`disc ${st}`}>
+                {st === 'lock' ? (
+                  <PadlockIcon size={18} />
+                ) : st === 'gold-medallion' ? (
+                  <div className="gold-star-medallion">★</div>
+                ) : null}
+              </div>
+
+              {/* Fila de estrellas doradas debajo del nodo completado */}
+              {cantEstrellas > 0 && (
+                <div className="node-stars">
+                  {Array.from({ length: cantEstrellas }).map((_, sIdx) => (
+                    <span key={sIdx} className="mini-gold-star">★</span>
+                  ))}
+                </div>
+              )}
             </button>
           );
         })}
-        <div className="player" style={{ left: NODOS[pos][0] + '%', top: NODOS[pos][1] + '%' }}>
-          <svg viewBox="0 0 10 14" aria-hidden="true">{sprite(JUGADOR)}</svg>
+
+        {/* Sprite del Jugador posicionado sobre el nodo actual */}
+        <div
+          className="player"
+          style={{
+            left: NODOS[pos][0] + '%',
+            top: NODOS[pos][1] + '%'
+          }}
+        >
+          <PlayerSprite width={34} />
         </div>
-        <div className="info"><b>Nivel {i + 1}</b>{niveles[i].t}<br /><span className="gold">{estrellas(hechos[i] || 0)}</span></div>
+
+        {/* Tarjeta de Información de Nivel (Esquina inferior derecha) */}
+        <div className="info-card">
+          <div className="info-level-title">Nivel {i + 1}</div>
+          <div className="info-level-subtitle">{niveles[i]?.t || 'Condicionales'}</div>
+          <div className="info-stars-row">
+            {[1, 2, 3].map((starIdx) => (
+              starIdx <= estrellasNivel ? (
+                <StarGold key={starIdx} size={26} />
+              ) : (
+                <StarDark key={starIdx} size={26} />
+              )
+            ))}
+          </div>
+        </div>
+
+        {/* Toast / Aviso temporal */}
         {aviso && <div className="toast" role="status">{aviso}</div>}
       </div>
     </div>
