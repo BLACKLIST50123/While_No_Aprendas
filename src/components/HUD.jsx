@@ -9,7 +9,7 @@ import {
   TrophyIcon
 } from './PixelIcons';
 
-export default function HUD({ actual, com, racha, icono, onPerfil, onLogros, onExtras }) {
+export default function HUD({ actual, com, racha, icono, onPerfil, onLogros, onExtras, onRanking }) {
   return (
     <>
       {/* 1. Nivel actual + botón de ajustes (Esquina superior izquierda) */}
@@ -23,6 +23,9 @@ export default function HUD({ actual, com, racha, icono, onPerfil, onLogros, onE
             <span className="hud-level-num">{actual + 1}</span>
           </div>
         </div>
+        <button className="hud-gear-btn" onClick={onRanking} aria-label="Ranking" title="Ranking">
+          <TrophyIcon size={20} />
+        </button>
         <button className="hud-gear-btn" onClick={onPerfil} aria-label="Ajustes y perfil" title="Ajustes">
           <GearIcon size={22} />
         </button>
@@ -51,29 +54,7 @@ export default function HUD({ actual, com, racha, icono, onPerfil, onLogros, onE
         </div>
       </div>
 
-      {/* 3. Botones inferiores izquierdos: Perfil, Extras, Logros */}
-      <div className="hud-bottom-nav">
-        <button className="hud-nav-item" onClick={onPerfil} aria-label="Perfil">
-          <div className="hud-nav-box">
-            <BackpackIcon size={32} />
-          </div>
-          <span className="hud-nav-label">Perfil</span>
-        </button>
 
-        <button className="hud-nav-item" onClick={onExtras} aria-label="Extras">
-          <div className="hud-nav-box">
-            <BookIcon size={32} />
-          </div>
-          <span className="hud-nav-label">Extras</span>
-        </button>
-
-        <button className="hud-nav-item" onClick={onLogros} aria-label="Logros">
-          <div className="hud-nav-box">
-            <TrophyIcon size={32} />
-          </div>
-          <span className="hud-nav-label">Logros</span>
-        </button>
-      </div>
     </>
   );
 }

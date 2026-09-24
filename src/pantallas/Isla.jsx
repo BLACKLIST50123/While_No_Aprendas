@@ -6,7 +6,8 @@ import HUD from '../components/HUD';
 import Nivel from '../components/Nivel';
 import PanelNivel from '../components/PanelNivel';
 import PantallaTeoria from '../components/PantallaTeoria';
-import { Ranking, Objetivo, Perfil, Logros } from '../components/Paneles';
+import { Ranking, Objetivo, Perfil, Logros, Ventana } from '../components/Paneles';
+import { BackpackIcon, BookIcon, TrophyIcon } from '../components/PixelIcons';
 import '../estilos/isla.css';
 
 // Mapea la sección del registro al ID del curso
@@ -91,16 +92,6 @@ export default function Isla({ sesion, onSalir }) {
 
   return (
     <div className="isla">
-      {/* Header con selector de curso */}
-      <header className="top">
-        <h1>while(no_aprendas)</h1>
-        <label>Curso{' '}
-          <select value={cid} onChange={e => setCid(e.target.value)}>
-            {CURSOS.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
-        </label>
-      </header>
-
       {/* Mapa de la isla */}
       <Mapa
         niveles={curso.niveles}
@@ -120,13 +111,27 @@ export default function Isla({ sesion, onSalir }) {
           onPerfil={() => setPanel('perfil')}
           onLogros={() => setPanel('logros')}
           onExtras={() => avisar('Extras: próximamente')}
+          onRanking={() => setPanel('ranking')}
         />
         <div className="side rpg-board">
           <div className="rivet tl" />
           <div className="rivet tr" />
           <div className="rivet bl" />
           <div className="rivet br" />
-          <Ranking xp={p.xp} nombre={sesion.usuario} />
+          <div className="side-nav-menu">
+            <button className="side-nav-item" onClick={() => setPanel('perfil')} aria-label="Perfil">
+              <BackpackIcon size={24} />
+              <span>Perfil</span>
+            </button>
+            <button className="side-nav-item" onClick={() => avisar('Extras: próximamente')} aria-label="Extras">
+              <BookIcon size={24} />
+              <span>Extras</span>
+            </button>
+            <button className="side-nav-item" onClick={() => setPanel('logros')} aria-label="Logros">
+              <TrophyIcon size={24} />
+              <span>Logros</span>
+            </button>
+          </div>
           <Objetivo hechos={nHechos} total={total} />
         </div>
       </Mapa>
@@ -165,6 +170,28 @@ export default function Isla({ sesion, onSalir }) {
       )}
 
       {/* Modales */}
+      {panel === 'ranking' && (
+        <div className="velo" onMouseDown={(e) => e.target === e.currentTarget && setPanel(null)}>
+          <div className="rpg-board-modal">
+            <button 
+              onClick={() => setPanel(null)} 
+              aria-label="Cerrar"
+              style={{
+                position: 'absolute', top: '-14px', right: '-14px',
+                background: '#d64545', border: '3px solid #fff', borderRadius: '50%',
+                width: '32px', height: '32px', color: '#fff', cursor: 'pointer',
+                fontWeight: '900', fontSize: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+            >×</button>
+            <div className="rivet tl" />
+            <div className="rivet tr" />
+            <div className="rivet bl" />
+            <div className="rivet br" />
+            <Ranking xp={p.xp} nombre={sesion.usuario} />
+          </div>
+        </div>
+      )}
       {panel === 'perfil'  && <Perfil  p={p} sesion={sesion} onReiniciar={reiniciar} onSalir={onSalir} onCerrar={() => setPanel(null)} />}
       {panel === 'logros'  && <Logros  p={p} onCerrar={() => setPanel(null)} />}
     </div>

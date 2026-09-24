@@ -28,19 +28,19 @@ export default function Mapa({
 
         {/* Nodos del Mapa */}
         {niveles.map((n, k) => {
-          const esHecho    = Boolean(hechos[k]?.completado);
-          const esActual   = k === actual;
+          const esHecho = Boolean(hechos[k]?.completado);
+          const esActual = k === actual;
           const esBloqueado = k > actual;
 
           // Estado visual del nodo
           let st;
-          if (esBloqueado)       st = 'lock';
-          else if (esHecho)      st = 'gold-medallion';
-          else if (esActual)     st = 'now';
-          else                   st = 'open';
+          if (esBloqueado) st = 'lock';
+          else if (esHecho) st = 'gold-medallion';
+          else if (esActual) st = 'now';
+          else st = 'open';
 
           const esNuevo = k === recienDesbloqueado;
-          const lecciones = hechos[k]?.lecciones || [0,0,0,0,0];
+          const lecciones = hechos[k]?.lecciones || [0, 0, 0, 0, 0];
           const totalLecciones = n.lecciones?.length || 5;
 
           return (
@@ -67,17 +67,27 @@ export default function Mapa({
                 ) : null}
               </div>
 
-              {/* Barra de progreso de 5 fragmentos */}
-              {(!esBloqueado) && (
-                <div style={{ display: 'flex', width: '36px', height: '6px', background: '#112240', borderRadius: '3px', marginTop: '6px', overflow: 'hidden', border: '1px solid #1e3250' }}>
-                  {Array.from({ length: totalLecciones }).map((_, fIdx) => (
-                    <div key={fIdx} style={{
-                      flex: 1, borderRight: fIdx < totalLecciones - 1 ? '1px solid #0d1b2a' : 'none',
-                      background: (lecciones[fIdx] > 0) ? '#4ee86a' : 'transparent'
-                    }} />
-                  ))}
-                </div>
-              )}
+              {/* Barra circular particionada de progreso */}
+              {(!esBloqueado && st !== 'gold-medallion') && (() => {
+                const step = 360 / totalLecciones;
+                const gap = 8;
+                let stops = [];
+                for (let i = 0; i < totalLecciones; i++) {
+                  const start = i * step;
+                  const end = (i + 1) * step;
+                  const color = lecciones[i] > 0 ? '#4ee86a' : 'rgba(80, 100, 120, 0.6)';
+                  stops.push(`${color} ${start}deg ${end - gap}deg`);
+                  stops.push(`transparent ${end - gap}deg ${end}deg`);
+                }
+                return (
+                  <div style={{
+                    position: 'absolute', inset: '-10px', borderRadius: '50%',
+                    background: `conic-gradient(${stops.join(', ')})`,
+                    WebkitMask: 'radial-gradient(closest-side, transparent calc(100% - 6px), black calc(100% - 5px))',
+                    zIndex: -1
+                  }} />
+                );
+              })()}
             </button>
           );
         })}

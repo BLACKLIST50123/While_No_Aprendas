@@ -21,8 +21,10 @@
   background: var(--bg);
   color: var(--fg);
   font-family: 'Nunito', 'VT323', sans-serif;
-  min-height: 100vh;
-  padding: 14px;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  overflow: hidden;
 }
 
 .isla * {
@@ -61,21 +63,24 @@
 
 /* Contenedor del Mapa */
 .isla .wrap {
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow-x: auto;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .isla .stage {
   position: relative;
+  width: 100%;
+  height: 100%;
   min-width: 820px;
-  aspect-ratio: 1344 / 768;
   container-type: inline-size;
   background: #1b6fd0 center / 100% 100% no-repeat;
-  image-rendering: pixelated;
-  border: 4px solid #14203b;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  image-rendering: auto;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
   user-select: none;
 }
@@ -93,6 +98,8 @@
   gap: 0.8cqw;
   align-items: center;
   z-index: 15;
+  transform: scale(0.7);
+  transform-origin: top left;
 }
 
 .isla .hud-level-box {
@@ -180,6 +187,8 @@
   gap: 1.6cqw;
   align-items: center;
   z-index: 15;
+  transform: scale(0.7);
+  transform-origin: top center;
 }
 
 .isla .hud-pill {
@@ -259,24 +268,51 @@
 .isla .rivet.bl { bottom: 0.3cqw; left: 0.3cqw; }
 .isla .rivet.br { bottom: 0.3cqw; right: 0.3cqw; }
 
+.isla .rpg-board-modal {
+  position: relative;
+  width: 360px;
+  background: #2b1d12;
+  border: 6px solid #c89a42;
+  box-shadow: 0 0 0 4px #140d07, 8px 8px 0 rgba(0, 0, 0, 0.55);
+  border-radius: 12px;
+  padding: 16px;
+  margin: auto;
+  z-index: 15;
+}
+
+.isla .rpg-board-modal .rivet {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #fff1a8 15%, #d9a834 65%, #664307 100%);
+  border-radius: 50%;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+.isla .rpg-board-modal .rivet.tl { top: 8px; left: 8px; }
+.isla .rpg-board-modal .rivet.tr { top: 8px; right: 8px; }
+.isla .rpg-board-modal .rivet.bl { bottom: 8px; left: 8px; }
+.isla .rpg-board-modal .rivet.br { bottom: 8px; right: 8px; }
+
 /* Cinta / Placa pergamino de Ranking */
 .isla .rk-header-ribbon {
   background: #f7efdc;
-  border: 0.2cqw solid #3a2512;
-  border-radius: 0.25cqw;
-  padding: 0.25cqw 0.5cqw;
+  border: 4px solid #3a2512;
+  border-radius: 6px;
+  padding: 6px 10px;
   text-align: center;
-  margin: 0.1cqw auto 0.6cqw;
-  box-shadow: 0 0.18cqw 0.35cqw rgba(0, 0, 0, 0.3);
+  margin: 4px auto 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   width: 90%;
 }
 
 .isla .rk-header-ribbon span {
   color: #382413;
-  font-size: 0.82cqw;
+  font-size: 14px;
   font-weight: 900;
   font-family: 'Press Start 2P', monospace;
-  letter-spacing: -0.01cqw;
+  letter-spacing: -0.5px;
   display: block;
 }
 
@@ -284,47 +320,47 @@
 .isla .rk-list {
   display: flex;
   flex-direction: column;
-  gap: 0.22cqw;
+  gap: 6px;
 }
 
 .isla .rk-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.3cqw 0.55cqw;
-  border-radius: 0.35cqw;
+  padding: 8px 12px;
+  border-radius: 8px;
   color: #ffffff;
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.85cqw;
+  font-size: 14px;
   background: rgba(255, 255, 255, 0.05);
 }
 
 .isla .rk-pos {
-  width: 1.1cqw;
+  width: 24px;
   text-align: left;
   font-weight: 800;
-  font-size: 0.85cqw;
+  font-size: 14px;
 }
 
 .isla .rk-avatar-box {
-  width: 1.7cqw;
-  height: 1.7cqw;
-  border-radius: 0.25cqw;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 0.35cqw;
+  margin: 0 8px;
   background: #dfcba5;
-  border: 0.12cqw solid #2b1d0c;
+  border: 2px solid #2b1d0c;
   flex-shrink: 0;
 }
 
 .isla .rk-name {
   flex: 1;
   text-align: left;
-  margin-left: 0.3cqw;
-  font-size: 0.82cqw;
+  margin-left: 8px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -332,7 +368,7 @@
 
 .isla .rk-score {
   font-weight: 800;
-  font-size: 0.88cqw;
+  font-size: 14px;
   text-align: right;
 }
 
@@ -340,8 +376,8 @@
 .isla .rk-row.me {
   background: #f5a723;
   color: #1a1206;
-  border: 0.15cqw solid #ffe485;
-  box-shadow: 0 0.15cqw 0.3cqw rgba(0, 0, 0, 0.3);
+  border: 3px solid #ffe485;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   font-weight: 900;
 }
 
@@ -418,53 +454,37 @@
    3. BOTONES INFERIORES IZQUIERDOS (Perfil, Extras, Logros)
    ======================================================== */
 
-.isla .hud-bottom-nav {
-  position: absolute;
-  left: 1.6cqw;
-  bottom: 1.4cqw;
-  display: flex;
-  gap: 1.1cqw;
-  z-index: 15;
-}
-
-.isla .hud-nav-item {
-  background: none;
-  border: none;
-  padding: 0;
+.isla .side-nav-menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.12s ease;
+  gap: 0.8cqw;
+  margin-bottom: 1.2cqw;
 }
 
-.isla .hud-nav-item:hover {
-  transform: translateY(-0.25cqw);
-}
-
-.isla .hud-nav-item:active {
-  transform: translateY(0.1cqw);
-}
-
-.isla .hud-nav-box {
-  width: 4.8cqw;
-  height: 4.8cqw;
+.isla .side-nav-item {
   background: #112248;
-  border: 0.28cqw solid #e0b44a;
-  box-shadow: 0 0 0 0.18cqw #091329, 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.6);
-  border-radius: 0.75cqw;
+  border: 0.2cqw solid #e0b44a;
+  border-radius: 0.5cqw;
+  box-shadow: 0 0 0 0.15cqw #091329;
+  padding: 0.6cqw 0.8cqw;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.8cqw;
+  color: #ffffff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.1cqw;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
 }
 
-.isla .hud-nav-label {
-  margin-top: 0.35cqw;
-  color: #ffd83b;
-  font-size: 0.88cqw;
-  font-weight: 900;
-  font-family: 'Press Start 2P', monospace;
-  text-shadow: 0.14cqw 0.14cqw 0 #000, -0.05cqw -0.05cqw 0 #4d2f00;
+.isla .side-nav-item:hover {
+  transform: translateX(0.4cqw);
+  filter: brightness(1.2);
+}
+
+.isla .side-nav-item span {
+  text-shadow: 0.1cqw 0.1cqw 0 #000;
 }
 
 /* ========================================================
