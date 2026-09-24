@@ -46,13 +46,20 @@ export function Ordenar({ q, valor, setValor, orden, bloq }) {
 
   return (
     <div className="ordenar-wrapper" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <div className="resp" style={{ background: '#111d2e', borderColor: '#263e5c', minHeight: '64px', borderRadius: '6px' }}>
+      <div className="resp" style={{ 
+        background: '#111d2e', borderColor: '#263e5c', minHeight: '64px', borderRadius: '6px',
+        display: 'flex', flexWrap: flujo ? 'nowrap' : 'wrap', flexDirection: flujo ? 'column' : 'row',
+        alignItems: 'center', justifyContent: 'flex-start', gap: flujo ? '0' : '4px',
+        padding: '16px', maxHeight: flujo ? '100%' : 'none', overflowY: flujo ? 'auto' : 'visible',
+        flex: flujo ? 1 : 'none'
+      }}>
         {valor.length ? (
           valor.map((i, k) => (
-            <span key={i} style={{ display: 'inline-flex', alignItems: 'center' }}>
-              {k > 0 && flujo && <b className="flecha" style={{ margin: '0 4px', color: '#f5c542' }}>▼</b>}
+            <div key={i} style={{ display: 'flex', flexDirection: flujo ? 'column' : 'row', alignItems: 'center' }}>
+              {k > 0 && flujo && <b className="flecha" style={{ margin: '4px 0', color: '#f5c542', fontSize: '20px' }}>▼</b>}
+              {k > 0 && !flujo && <b className="flecha" style={{ margin: '0 4px', color: '#f5c542' }}>►</b>}
               {chip(i, true)}
-            </span>
+            </div>
           ))
         ) : (
           <span className="ph" style={{ color: '#7a8ea8', fontSize: '15px' }}>

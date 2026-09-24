@@ -15,7 +15,7 @@ export const estrellas = (n) => '★'.repeat(n) + '☆'.repeat(3-n);
 const a = (p, o, ans) => ({ tipo:'alt',   p, o, a: ans });
 const or= (p, l)       => ({ tipo:'orden', p, l });
 const fl= (p, l)       => ({ tipo:'flujo', p, l });
-const T = (titulo, texto, codigo=null) => ({ titulo, texto, codigo });
+const T = (titulo, texto, codigo=null, grafico=null) => ({ titulo, texto, codigo, grafico });
 
 // ═══════════════════════════════════════════════════════════════════
 //  CURSOS — Jerarquía: Curso → Nivel (nodo del mapa) → Lección
@@ -41,7 +41,7 @@ export const CURSOS = [
               'Todo algoritmo debe ser:\n• Finito: siempre termina en algún momento.\n• Preciso: cada paso es claro y sin ambigüedad.\n• Eficaz: resuelve correctamente el problema planteado.'),
             T('Algoritmos en la vida diaria',
               'Los algoritmos no son exclusivos de las computadoras. Seguir una receta, las instrucciones de un GPS o los pasos para atarse los zapatos son algoritmos de la vida real.',
-              'Receta de cocina ≡ Algoritmo\n  1. Hervir agua\n  2. Agregar ingredientes\n  3. Esperar 20 minutos\n  4. Servir'),
+              'Ejemplo: Preparar un sándwich\n  1. Tomar dos rebanadas de pan\n  2. Poner jamón y queso en una\n  3. Juntar ambas rebanadas\n  4. ¡Listo para comer!'),
           ],
           ejercicios: [
             a('¿Qué es un algoritmo?',
@@ -69,7 +69,7 @@ export const CURSOS = [
               'Algoritmo: calcular área\nSalida: área = 15'),
             T('Esquema: Entrada → Proceso → Salida',
               'Todo algoritmo sigue este esquema fundamental: recibe entradas, las transforma en el proceso, y entrega resultados como salida.',
-              'base=5, altura=3 → [base × altura] → área=15'),
+              'base=5, altura=3 → [base × altura] → área=15', 'esquema_eps'),
           ],
           ejercicios: [
             a('¿Qué son los datos de entrada de un algoritmo?',
@@ -94,9 +94,9 @@ export const CURSOS = [
             T('Estructura INICIO / FIN',
               'Todo pseudocódigo comienza con la palabra INICIO y termina con FIN. Las instrucciones del algoritmo se escriben entre estas dos palabras, una por línea.',
               'INICIO\n  [instrucción 1]\n  [instrucción 2]\nFIN'),
-            T('Instrucciones LEER y ESCRIBIR',
-              'LEER permite recibir un dato del usuario (entrada). ESCRIBIR muestra un mensaje o resultado al usuario (salida). Son las instrucciones más básicas del pseudocódigo.',
-              'INICIO\n  LEER nombre\n  ESCRIBIR "Hola, ", nombre\nFIN'),
+            T('Ejemplo: Saludando al usuario',
+              'Veamos un algoritmo completo en pseudocódigo. Usamos INICIO y FIN para delimitar, ESCRIBIR para mostrar mensajes, y LEER para recibir la respuesta.',
+              'INICIO\n  ESCRIBIR "Hola, ¿cómo te llamas?"\n  LEER nombre\n  ESCRIBIR "¡Mucho gusto, ", nombre, "!"\nFIN'),
           ],
           ejercicios: [
             a('¿Qué es el pseudocódigo?',
@@ -119,10 +119,10 @@ export const CURSOS = [
             T('¿Qué es un diagrama de flujo?',
               'Un diagrama de flujo es la representación gráfica de un algoritmo. Usa figuras geométricas conectadas por flechas para mostrar los pasos y el orden en que se ejecutan. Es muy útil para visualizar el algoritmo antes de escribir código.'),
             T('Las figuras del diagrama',
-              'Cada figura tiene un significado fijo:\n• Óvalo → Inicio / Fin\n• Rectángulo → Proceso (cálculo o asignación)\n• Paralelogramo → Entrada / Salida de datos\n• Rombo → Decisión (condición SÍ/NO)'),
-            T('Reglas básicas del flujo',
-              'Las flechas muestran la dirección de ejecución. Todo diagrama tiene exactamente un Inicio y un Fin. El flujo va generalmente de arriba hacia abajo.',
-              'Inicio → [Proceso] → [Salida] → Fin'),
+              'Cada figura tiene un significado fijo:\n• Óvalo → Inicio / Fin\n• Rectángulo → Proceso (cálculo o asignación)\n• Paralelogramo → Entrada / Salida de datos\n• Rombo → Decisión (condición SÍ/NO)', null, 'diagrama_figuras'),
+            T('Ejemplo: Doble de un número',
+              'Mira cómo este pseudocódigo se vería de manera simplificada en un diagrama de flujo. Observa que siempre fluye de arriba hacia abajo conectando cada paso.',
+              null, 'ejemplo_doble_flujo'),
           ],
           ejercicios: [
             a('¿Para qué sirve un diagrama de flujo?',
@@ -177,7 +177,7 @@ export const CURSOS = [
           teoria: [
             T('El concepto de variable',
               'Una variable es un espacio en la memoria del computador que tiene un nombre y puede guardar un valor. Ese valor puede cambiar durante la ejecución del algoritmo.',
-              'Imagina una caja con una etiqueta:\n  [etiqueta: "edad"] → [valor: 15]'),
+              'Imagina una caja con una etiqueta:\n  [etiqueta: "edad"] → [valor: 15]', 'variable_caja'),
             T('Nombre de la variable',
               'El nombre identifica a la variable. Debe ser descriptivo (ej: "edad", "precio", "total"). En pseudocódigo usamos letras, sin espacios ni caracteres especiales.',
               'Correcto:  edad, nombre, total\nIncorrecto: 1var, mi variable, año'),
