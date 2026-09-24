@@ -633,14 +633,27 @@
   transition: transform 0.15s ease;
 }
 
-/* Nodos desbloqueados / activos (Verdes esmeralda) */
+/* Nodos completados — disco verde */
+.isla .disc.done,
 .isla .disc.open,
-.isla .disc.now,
-.isla .disc.done {
+.isla .disc.now {
   background: radial-gradient(circle at 35% 30%, #5ae863, #35b842 70%, #1e7526 100%);
   border: 0.25cqw solid #103b14;
   box-shadow: 0 0.55cqw 0 #103b14, 0 0.8cqw 0.8cqw rgba(0, 0, 0, 0.5);
 }
+
+/* Flash dorado para el nodo recién desbloqueado */
+.isla .node-flash .disc {
+  animation: nodeUnlock 3.5s ease-out forwards !important;
+}
+
+@keyframes nodeUnlock {
+  0%   { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  20%  { filter: brightness(2) drop-shadow(0 0 1.2cqw #ffd438); }
+  50%  { filter: brightness(1.5) drop-shadow(0 0 0.8cqw #ffd438); }
+  100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+}
+
 
 .isla .now .disc {
   animation: pulseNode 1.2s steps(4) infinite;

@@ -3,13 +3,14 @@ import { NODOS } from '../data/cursos';
 import messiah from '../assets/messiah.png';
 import { PlayerSprite, PadlockIcon, StarGold, StarDark } from './PixelIcons';
 
-export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, aviso, children }) {
+export default function Mapa({
+  niveles, hechos, actual, pos, onElegir,
+  mensaje, aviso, children,
+  recienDesbloqueado = null, // índice del nodo recién desbloqueado (flash dorado)
+}) {
   const [info, setInfo] = useState(null);
   const i = info ?? actual;
-
-  // Estrellas del nivel seleccionado (para el recuadro inferior derecho)
-  // Si tiene hechos[i] usamos ese valor; si es el nivel 3 y aún no tiene registro, mostramos 2 como en la referencia
-  const estrellasNivel = hechos[i] !== undefined ? hechos[i] : (i === 2 ? 2 : 0);
+  const estrellasNivel = hechos[i] !== undefined ? hechos[i] : 0;
 
   return (
     <div className="wrap">
@@ -17,7 +18,7 @@ export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, 
         {/* HUD y Paneles laterales */}
         {children}
 
-        {/* Mascota ángel "El Mesías del Pront" y bocadillo de diálogo */}
+        {/* Mascota ángel y bocadillo */}
         <div className="angel-container">
           <div className="bub">
             {mensaje || '¡Sigue aprendiendo y desbloquea nuevos niveles!'}
@@ -27,31 +28,36 @@ export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, 
 
         {/* Nodos del Mapa */}
         {niveles.map((n, k) => {
-          // Determinar estado del nodo
-          const esHecho = Boolean(hechos[k] || k < 2);
-          const esActual = k === actual;
-          const esBloqueado = !esHecho && !esActual && k > actual && k !== 4; // Node 5 (index 4) can be previewed/open as in image
-          const st = esBloqueado ? 'lock' : (k === 1 ? 'gold-medallion' : (esActual ? 'now' : (esHecho ? 'done' : 'open')));
+          const esHecho    = Boolean(hechos[k]);
+          const esActual   = k === actual;
+          const esBloqueado = k > actual;
 
-          // Estrellas bajo el nodo: en la imagen nodo 1 y nodo 2 tienen 3 estrellas
-          const cantEstrellas = hechos[k] !== undefined ? hechos[k] : (k < 2 ? 3 : 0);
+          // Estado visual del nodo
+          let st;
+          if (esBloqueado)       st = 'lock';
+          else if (esHecho)      st = hechos[k] === 3 ? 'gold-medallion' : 'done';
+          else if (esActual)     st = 'now';
+          else                   st = 'open';
+
+          const cantEstrellas = hechos[k] || 0;
+          const esNuevo = k === recienDesbloqueado;
 
           return (
             <button
               key={k}
-              className={`node ${st}`}
+              className={`node ${st} ${esNuevo ? 'node-flash' : ''}`}
               style={{ left: NODOS[k][0] + '%', top: NODOS[k][1] + '%' }}
-              aria-label={`Nivel ${k + 1}: ${n.t}${st === 'lock' ? ' (bloqueado)' : ''}`}
+              aria-label={`Nivel ${k + 1}: ${n.t}${esBloqueado ? ' (bloqueado)' : ''}`}
               onMouseEnter={() => setInfo(k)}
               onMouseLeave={() => setInfo(null)}
               onFocus={() => setInfo(k)}
               onBlur={() => setInfo(null)}
               onClick={() => onElegir(k)}
             >
-              {/* Etiqueta superior con el número de nivel */}
+              {/* Etiqueta superior */}
               <div className="tag">{k + 1}</div>
 
-              {/* Plataforma 3D del nodo */}
+              {/* Plataforma 3D */}
               <div className={`disc ${st}`}>
                 {st === 'lock' ? (
                   <PadlockIcon size={18} />
@@ -60,7 +66,7 @@ export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, 
                 ) : null}
               </div>
 
-              {/* Fila de estrellas doradas debajo del nodo completado */}
+              {/* Estrellas debajo del nodo completado */}
               {cantEstrellas > 0 && (
                 <div className="node-stars">
                   {Array.from({ length: cantEstrellas }).map((_, sIdx) => (
@@ -72,33 +78,28 @@ export default function Mapa({ niveles, hechos, actual, pos, onElegir, mensaje, 
           );
         })}
 
-        {/* Sprite del Jugador posicionado sobre el nodo actual */}
+        {/* Sprite del Jugador */}
         <div
           className="player"
-          style={{
-            left: NODOS[pos][0] + '%',
-            top: NODOS[pos][1] + '%'
-          }}
+          style={{ left: NODOS[pos][0] + '%', top: NODOS[pos][1] + '%' }}
         >
           <PlayerSprite width={34} />
         </div>
 
-        {/* Tarjeta de Información de Nivel (Esquina inferior derecha) */}
+        {/* Tarjeta inferior derecha: info del nivel seleccionado */}
         <div className="info-card">
           <div className="info-level-title">Nivel {i + 1}</div>
-          <div className="info-level-subtitle">{niveles[i]?.t || 'Condicionales'}</div>
+          <div className="info-level-subtitle">{niveles[i]?.t || '—'}</div>
           <div className="info-stars-row">
-            {[1, 2, 3].map((starIdx) => (
-              starIdx <= estrellasNivel ? (
-                <StarGold key={starIdx} size={26} />
-              ) : (
-                <StarDark key={starIdx} size={26} />
-              )
+            {[1, 2, 3].map(si => (
+              si <= estrellasNivel
+                ? <StarGold key={si} size={24} />
+                : <StarDark  key={si} size={24} />
             ))}
           </div>
         </div>
 
-        {/* Toast / Aviso temporal */}
+        {/* Toast / Aviso */}
         {aviso && <div className="toast" role="status">{aviso}</div>}
       </div>
     </div>

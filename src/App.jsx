@@ -5,13 +5,9 @@ import Registro from './pantallas/Registro.jsx';
 import Isla from './pantallas/Isla.jsx';
 
 const KEY = 'wna-sesion';
-const DEFAULT_SESSION = { usuario: 'Tú', seccion: 'Programación básica', personaje: 'boy' };
 const leer = () => {
-  try {
-    return JSON.parse(localStorage.getItem(KEY)) || DEFAULT_SESSION;
-  } catch {
-    return DEFAULT_SESSION;
-  }
+  try { return JSON.parse(localStorage.getItem(KEY)) || null; }
+  catch { return null; }
 };
 
 // Flujo: home → character → register → map (isla). Si ya hay sesión, "Iniciar partida" va directo al mapa.
