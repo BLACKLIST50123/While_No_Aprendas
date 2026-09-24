@@ -17,9 +17,8 @@ const PISTA = {
   flujo: 'Todo diagrama empieza en Inicio, termina en Fin y la decisión va en medio.',
 };
 
-export default function Nivel({ curso, idx, com, gastar, onFin, onCerrar }) {
-  const nivel = curso.niveles[idx];
-  const total = nivel.ej.length;
+export default function Nivel({ leccion, leccionIdx, nivel, nivelIdx, com, gastar, onFin, onCerrar }) {
+  const total = leccion.ejercicios.length;
 
   // ── Progreso del nivel ──────────────────────────────────────────────
   const [qi,          setQi]          = useState(0);
@@ -27,7 +26,7 @@ export default function Nivel({ curso, idx, com, gastar, onFin, onCerrar }) {
   const [directosOK,  setDirectosOK]  = useState(0); // sin errores en esa pregunta
 
   // ── Estado del ejercicio actual ─────────────────────────────────────
-  const q   = nivel.ej[qi];
+  const q   = leccion.ejercicios[qi];
   const alt = q?.tipo === 'alt';
   const [valor,     setValor]     = useState(alt ? -1 : []);
   const [ocultas,   setOcultas]   = useState([]);
@@ -137,8 +136,10 @@ export default function Nivel({ curso, idx, com, gastar, onFin, onCerrar }) {
     // nivel completado
     return (
       <NivelVictoria
+        leccion={leccion}
+        leccionIdx={leccionIdx}
         nivel={nivel}
-        idx={idx}
+        nivelIdx={nivelIdx}
         estrellas={est}
         tiempoMs={tiempoMs}
         precision={precision}
@@ -174,7 +175,7 @@ export default function Nivel({ curso, idx, com, gastar, onFin, onCerrar }) {
 
           <div className="nivel-progress-box">
             <div className="nivel-title-text">
-              NIVEL {idx + 1} · {nivel.t.toUpperCase()}
+              NIVEL {nivelIdx + 1} · LECCIÓN {leccionIdx + 1}
             </div>
             <div className="nivel-track">
               <div className="nivel-fill" style={{ width: `${progresoPct}%` }} />

@@ -4,6 +4,8 @@ import { useProgreso } from '../useProgreso';
 import Mapa from '../components/Mapa';
 import HUD from '../components/HUD';
 import Nivel from '../components/Nivel';
+import PanelNivel from '../components/PanelNivel';
+import PantallaTeoria from '../components/PantallaTeoria';
 import { Ranking, Objetivo, Perfil, Logros } from '../components/Paneles';
 import '../estilos/isla.css';
 
@@ -13,7 +15,10 @@ const CURSO_DE = { 'Algoritmos': 'pseudocodigo' };
 export default function Isla({ sesion, onSalir }) {
   const { p, completar, gastarComodin, reiniciar } = useProgreso(sesion.usuario);
   const [cid,    setCid]    = useState(CURSO_DE[sesion.seccion] || CURSOS[0].id);
-  const [nivel,  setNivel]  = useState(null);
+  const [nivel,  setNivel]  = useState(null); // indice del nivel abierto
+  const [leccionActiva, setLeccionActiva] = useState(null); // indice de la lección
+  const [mostrarTeoria, setMostrarTeoria] = useState(false);
+  const [enEjercicios, setEnEjercicios] = useState(false);
   const [panel,  setPanel]  = useState(null);
   const [aviso,  setAviso]  = useState('');
   const [recienDesbloqueado, setRecienDesbloqueado] = useState(null);
@@ -28,7 +33,7 @@ export default function Isla({ sesion, onSalir }) {
   // Primer nivel sin completar = nivel "actual" disponible
   let actual = 0;
   for (let i = 0; i < total; i++) {
-    if (!hechos[i]) { actual = i; break; }
+    if (!hechos[i]?.completado) { actual = i; break; }
     if (i === total - 1) actual = total - 1; // todos completados
   }
 
@@ -50,18 +55,31 @@ export default function Isla({ sesion, onSalir }) {
     setTimeout(() => setNivel(i), 500);
   };
 
-  // Callback al finalizar un nivel: guarda progreso y activa flash en nuevo nodo
-  const alTerminarNivel = (est) => {
-    const nivelIdx = nivel;
-    completar(cid, nivelIdx, est);
-    setNivel(null);
+  // Callback al elegir lección
+  const handleElegirLeccion = (idx) => {
+    setLeccionActiva(idx);
+    setMostrarTeoria(true);
+  };
 
-    // Si hay un nivel siguiente, mostrar flash
-    const siguienteIdx = nivelIdx + 1;
-    if (siguienteIdx < total) {
-      setRecienDesbloqueado(siguienteIdx);
-      clearTimeout(flashTimer.current);
-      flashTimer.current = setTimeout(() => setRecienDesbloqueado(null), 3500);
+  // Callback al finalizar una lección
+  const alTerminarLeccion = (est) => {
+    const nivelIdx = nivel;
+    completar(cid, nivelIdx, leccionActiva, est);
+    setEnEjercicios(false);
+    setLeccionActiva(null);
+
+    // Verificar si se completó el nivel
+    const nivelActualizado = p.hechos[cid]?.[nivelIdx] || { lecciones: [] };
+    const ahoraCompleto = nivelActualizado.lecciones.every((l, i) => i === leccionActiva ? Math.max(l, est) > 0 : l > 0);
+    
+    if (ahoraCompleto && !nivelActualizado.completado) {
+      // Si hay un nivel siguiente, mostrar flash
+      const siguienteIdx = nivelIdx + 1;
+      if (siguienteIdx < total) {
+        setRecienDesbloqueado(siguienteIdx);
+        clearTimeout(flashTimer.current);
+        flashTimer.current = setTimeout(() => setRecienDesbloqueado(null), 3500);
+      }
     }
   };
 
@@ -113,16 +131,36 @@ export default function Isla({ sesion, onSalir }) {
         </div>
       </Mapa>
 
-      {/* Pantalla de nivel (y pantalla de victoria al terminar) */}
-      {nivel !== null && (
+      {/* Pantallas del flujo de lecciones */}
+      {nivel !== null && !mostrarTeoria && !enEjercicios && (
+        <PanelNivel
+          nivel={curso.niveles[nivel]}
+          nivelIdx={nivel}
+          nivelHechos={hechos[nivel]}
+          onClose={() => setNivel(null)}
+          onElegirLeccion={handleElegirLeccion}
+        />
+      )}
+
+      {mostrarTeoria && leccionActiva !== null && (
+        <PantallaTeoria
+          leccion={curso.niveles[nivel].lecciones[leccionActiva]}
+          onVolver={() => { setMostrarTeoria(false); setLeccionActiva(null); }}
+          onComenzar={() => { setMostrarTeoria(false); setEnEjercicios(true); }}
+        />
+      )}
+
+      {enEjercicios && leccionActiva !== null && (
         <Nivel
-          key={cid + nivel}
-          curso={curso}
-          idx={nivel}
+          key={cid + nivel + leccionActiva}
+          leccion={curso.niveles[nivel].lecciones[leccionActiva]}
+          leccionIdx={leccionActiva}
+          nivel={curso.niveles[nivel]}
+          nivelIdx={nivel}
           com={p.com}
           gastar={gastarComodin}
-          onFin={alTerminarNivel}
-          onCerrar={() => setNivel(null)}
+          onFin={alTerminarLeccion}
+          onCerrar={() => { setEnEjercicios(false); setLeccionActiva(null); }}
         />
       )}
 

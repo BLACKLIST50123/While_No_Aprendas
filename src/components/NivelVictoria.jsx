@@ -14,7 +14,7 @@ const MSG = {
   1: '¡Lo lograste! Repasa el tema e inténtalo de nuevo.',
 };
 
-export default function NivelVictoria({ nivel, idx, estrellas = 1, tiempoMs = 0, precision = 0, errores = 0, xpGanada = 30, onVolver }) {
+export default function NivelVictoria({ leccion, leccionIdx, nivel, nivelIdx, estrellas = 1, tiempoMs = 0, precision = 0, errores = 0, xpGanada = 30, onVolver }) {
   const stars = '⭐'.repeat(estrellas) + '☆'.repeat(3 - estrellas);
 
   return (
@@ -41,10 +41,10 @@ export default function NivelVictoria({ nivel, idx, estrellas = 1, tiempoMs = 0,
         <img src={capyRiendose} alt="Capyehein" style={{ width: 100, objectFit: 'contain' }} />
 
         <div style={{ color: '#aac4e0', fontSize: 12, letterSpacing: 2, fontFamily: 'monospace' }}>
-          NIVEL {idx + 1} · {nivel?.t?.toUpperCase()}
+          NIVEL {nivelIdx + 1} · LECCIÓN {leccionIdx + 1}
         </div>
 
-        <h2 style={{ color: '#ffd84e', margin: 0, fontSize: 22 }}>¡NIVEL COMPLETADO!</h2>
+        <h2 style={{ color: '#ffd84e', margin: 0, fontSize: 22 }}>¡LECCIÓN COMPLETADA!</h2>
 
         <div style={{ fontSize: 40 }}>{stars}</div>
 
@@ -85,7 +85,7 @@ export default function NivelVictoria({ nivel, idx, estrellas = 1, tiempoMs = 0,
             marginTop: 4,
           }}
         >
-          🗺️ VOLVER AL MAPA
+          📈 VER MI PROGRESO
         </button>
       </div>
     </div>

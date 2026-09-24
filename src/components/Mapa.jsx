@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NODOS } from '../data/cursos';
 import messiah from '../assets/messiah.png';
-import { PlayerSprite, PadlockIcon, StarGold, StarDark } from './PixelIcons';
+import { PlayerSprite, PadlockIcon } from './PixelIcons';
 
 export default function Mapa({
   niveles, hechos, actual, pos, onElegir,
@@ -10,8 +10,8 @@ export default function Mapa({
 }) {
   const [info, setInfo] = useState(null);
   const i = info ?? actual;
-  const estrellasNivel = hechos[i] !== undefined ? hechos[i] : 0;
-
+  const leccionesCompletadasInfo = hechos[i]?.lecciones?.filter(l => l > 0).length || 0;
+  const totalLeccionesInfo = niveles[i]?.lecciones?.length || 5;
   return (
     <div className="wrap">
       <div className="stage" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}mapa1.jpg)` }}>
@@ -28,19 +28,20 @@ export default function Mapa({
 
         {/* Nodos del Mapa */}
         {niveles.map((n, k) => {
-          const esHecho    = Boolean(hechos[k]);
+          const esHecho    = Boolean(hechos[k]?.completado);
           const esActual   = k === actual;
           const esBloqueado = k > actual;
 
           // Estado visual del nodo
           let st;
           if (esBloqueado)       st = 'lock';
-          else if (esHecho)      st = hechos[k] === 3 ? 'gold-medallion' : 'done';
+          else if (esHecho)      st = 'gold-medallion';
           else if (esActual)     st = 'now';
           else                   st = 'open';
 
-          const cantEstrellas = hechos[k] || 0;
           const esNuevo = k === recienDesbloqueado;
+          const lecciones = hechos[k]?.lecciones || [0,0,0,0,0];
+          const totalLecciones = n.lecciones?.length || 5;
 
           return (
             <button
@@ -66,11 +67,14 @@ export default function Mapa({
                 ) : null}
               </div>
 
-              {/* Estrellas debajo del nodo completado */}
-              {cantEstrellas > 0 && (
-                <div className="node-stars">
-                  {Array.from({ length: cantEstrellas }).map((_, sIdx) => (
-                    <span key={sIdx} className="mini-gold-star">★</span>
+              {/* Barra de progreso de 5 fragmentos */}
+              {(!esBloqueado) && (
+                <div style={{ display: 'flex', width: '36px', height: '6px', background: '#112240', borderRadius: '3px', marginTop: '6px', overflow: 'hidden', border: '1px solid #1e3250' }}>
+                  {Array.from({ length: totalLecciones }).map((_, fIdx) => (
+                    <div key={fIdx} style={{
+                      flex: 1, borderRight: fIdx < totalLecciones - 1 ? '1px solid #0d1b2a' : 'none',
+                      background: (lecciones[fIdx] > 0) ? '#4ee86a' : 'transparent'
+                    }} />
                   ))}
                 </div>
               )}
@@ -90,12 +94,8 @@ export default function Mapa({
         <div className="info-card">
           <div className="info-level-title">Nivel {i + 1}</div>
           <div className="info-level-subtitle">{niveles[i]?.t || '—'}</div>
-          <div className="info-stars-row">
-            {[1, 2, 3].map(si => (
-              si <= estrellasNivel
-                ? <StarGold key={si} size={24} />
-                : <StarDark  key={si} size={24} />
-            ))}
+          <div className="info-stars-row" style={{ fontSize: '14px', color: '#6ec4ff', fontWeight: 'bold' }}>
+            Progreso: {leccionesCompletadasInfo} / {totalLeccionesInfo} lecciones
           </div>
         </div>
 
